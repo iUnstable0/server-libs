@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "rootDirs": [
+      "src"
+    ],
+    "outDir": "build",
+    "lib": [
+      "ESNext"
+    ],
+    "target": "ESNext",
+    // "module": "esnext",
+    "module": "commonjs",
+    "moduleResolution": "NodeNext",
+    "esModuleInterop": true,
+    "types": [
+      "node"
+    ],
+    "watch": true,
+    "resolveJsonModule": true,
+    "baseUrl": "src",
+    "incremental": true,
+    "skipLibCheck": true
+  },
+  "include": [
+    "./src"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
