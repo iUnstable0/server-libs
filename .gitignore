@@ -5,7 +5,7 @@
 /.next/
 
 # production
-/build
+#/build
 # /dist
 
 # local env files
