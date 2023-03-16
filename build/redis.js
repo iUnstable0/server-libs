@@ -16,14 +16,14 @@ function createRedis() {
 }
 const redisInstances = {};
 class lib_redis {
-    static get(db, ignorePool) {
+    static get(ignorePool) {
         if (ignorePool) {
             return createRedis();
         }
-        if (!redisInstances[db]) {
-            redisInstances[db] = createRedis();
+        if (!redisInstances["default"]) {
+            redisInstances["default"] = createRedis();
         }
-        return redisInstances[db];
+        return redisInstances["default"];
     }
 }
 exports.default = lib_redis;

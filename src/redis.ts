@@ -1,6 +1,6 @@
 import Redis from "ioredis";
 
-function createRedis() {
+function createRedis(): any {
   return new Redis({
     host: "127.0.0.1",
     port: Number(process.env.REDIS_PORT),
@@ -17,15 +17,15 @@ function createRedis() {
 const redisInstances = {};
 
 export default class lib_redis {
-  public static get(db: string, ignorePool?: boolean) {
+  public static get(ignorePool?: boolean): any {
     if (ignorePool) {
       return createRedis();
     }
 
-    if (!redisInstances[db]) {
-      redisInstances[db] = createRedis();
+    if (!redisInstances["default"]) {
+      redisInstances["default"] = createRedis();
     }
 
-    return redisInstances[db];
+    return redisInstances["default"];
   }
 }

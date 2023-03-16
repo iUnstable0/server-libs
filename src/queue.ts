@@ -1,9 +1,11 @@
 import lib_redis from "./redis";
 
-const redis = lib_redis.get("queue");
+const redis = lib_redis.get();
 
 export default class lib_queue {
-  public static async get(key: string) {
+  public static async get(
+    key: string
+  ): Promise<{ data: Array<object> | null }> {
     try {
       const data = await redis.lrange(key, 0, -1);
 
@@ -24,7 +26,14 @@ export default class lib_queue {
     }
   }
 
-  public static async add(key: string, value: object, ttl: number) {
+  public static async add(
+    key: string,
+    value: object,
+    ttl: number
+  ): Promise<{
+    queueLength: number;
+    queuePayload: object;
+  }> {
     try {
       const queuePayload = {
         ...value,
@@ -47,7 +56,11 @@ export default class lib_queue {
     }
   }
 
-  public static async update(key: string, index: number, value: object) {
+  public static async update(
+    key: string,
+    index: number,
+    value: object
+  ): Promise<void> {
     try {
       await redis.lset(key, index, JSON.stringify(value));
     } catch (error) {
@@ -60,7 +73,7 @@ export default class lib_queue {
     }
   }
 
-  public static async remove(key: string, value: object) {
+  public static async remove(key: string, value: object): Promise<void> {
     try {
       await redis.lrem(key, 0, JSON.stringify(value));
     } catch (error) {

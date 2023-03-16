@@ -2,7 +2,7 @@ import lib_redis from "./redis";
 
 const cacheEnabled = process.env.REDIS_CACHE === "true";
 
-const redis = lib_redis.get("cache");
+const redis = lib_redis.get();
 
 export default class lib_cache {
   public static async get(key: string) {
@@ -56,7 +56,7 @@ export default class lib_cache {
     }
   }
 
-  public static async delete(key: string) {
+  public static async _delete(key: string) {
     if (!cacheEnabled) return;
 
     try {
