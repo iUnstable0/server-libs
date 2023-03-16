@@ -100,7 +100,7 @@ export default class lib_storage {
       data: Buffer;
     },
     options?: {
-      clearFolder?: boolean;
+      clearFiles?: boolean;
     }
   ): Promise<{
     publicSharingUrl: string;
@@ -108,26 +108,8 @@ export default class lib_storage {
   }> {
     const key = `${db}/${file.name}`;
 
-    if (options?.clearFolder) {
-      const objects = await client.send(
-        new ListObjectsV2Command({
-          Bucket: process.env.S3_BUCKET_NAME,
-          Prefix: db,
-        })
-      );
-
-      if (objects.Contents && objects.Contents.length > 0) {
-        await client.send(
-          new DeleteObjectsCommand({
-            Bucket: process.env.S3_BUCKET_NAME,
-            Delete: {
-              Objects: objects.Contents.map((object: any) => ({
-                Key: object.Key,
-              })),
-            },
-          })
-        );
-      }
+    if (options?.clearFiles) {
+      await lib_storage.clearFiles(db);
     }
 
     await client.send(
