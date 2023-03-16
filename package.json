@@ -1,6 +1,6 @@
 {
   "name": "@iunstable0/server-libs",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "main": "index.js",
   "scripts": {
     "build": "rimraf build && tsc --build",

@@ -2,7 +2,7 @@ import axios from "axios";
 import hcaptcha from "hcaptcha";
 
 export default class lib_captcha {
-  public static async verify(token: any, provider: string) {
+  public static async verify(token: any, provider: string): Promise<any> {
     if (provider === "cloudflare") {
       return new Promise((resolve, reject) =>
         axios
