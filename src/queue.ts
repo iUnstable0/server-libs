@@ -1,6 +1,6 @@
 import lib_redis from "./redis";
 
-const redis = lib_redis.get("queue");
+const redis = lib_redis.get();
 
 export default class lib_queue {
   public static async get(

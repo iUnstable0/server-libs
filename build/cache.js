@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const redis_1 = __importDefault(require("./redis"));
 const cacheEnabled = process.env.REDIS_CACHE === "true";
-const redis = redis_1.default.get("cache");
+const redis = redis_1.default.get();
 class lib_cache {
     static async get(key) {
         if (!cacheEnabled)
@@ -50,7 +50,7 @@ class lib_cache {
             throw error;
         }
     }
-    static async delete(key) {
+    static async _delete(key) {
         if (!cacheEnabled)
             return;
         try {
