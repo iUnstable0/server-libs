@@ -1,7 +1,6 @@
 {
-  "name": "my-custom-libs",
-  "version": "1.0.0",
-  "description": "",
+  "name": "@iunstable0/server-libs",
+  "version": "1.0.1",
   "main": "index.js",
   "scripts": {
     "build": "tsc --build"
