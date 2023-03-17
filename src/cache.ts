@@ -29,7 +29,7 @@ export default class lib_cache {
         };
       }
     } catch (error) {
-      console.error(`🚨 [Cache Lib] Error while getting key ${key}`, error);
+      console.error(`[Cache Lib] Error while getting key ${key}`, error);
 
       return {
         data: null,
@@ -48,7 +48,7 @@ export default class lib_cache {
       return await redis.set(key, value, "EX", ttl);
     } catch (error) {
       console.error(
-        `🚨 [Cache Lib] Error while setting key ${key} to value ${value}`,
+        `[Cache Lib] Error while setting key ${key} to value ${value}`,
         error
       );
 
@@ -62,7 +62,7 @@ export default class lib_cache {
     try {
       await redis.del(key);
     } catch (error) {
-      console.error(`🚨 [Cache Lib] Error while deleting key ${key}`, error);
+      console.error(`[Cache Lib] Error while deleting key ${key}`, error);
 
       throw error;
     }
