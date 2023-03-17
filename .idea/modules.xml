@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../Falcon-Serverside/.idea/Falcon-Serverside.iml" filepath="$PROJECT_DIR$/../Falcon-Serverside/.idea/Falcon-Serverside.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/server-libs.iml" filepath="$PROJECT_DIR$/.idea/server-libs.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../website-libs/.idea/website-libs.iml" filepath="$PROJECT_DIR$/../website-libs/.idea/website-libs.iml" />
     </modules>
   </component>
 </project>
