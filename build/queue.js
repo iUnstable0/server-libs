@@ -18,7 +18,7 @@ class lib_queue {
             };
         }
         catch (error) {
-            console.error(`🚨 [Queue Lib] Error while getting key ${key}`, error);
+            console.error(`[Queue Lib] Error while getting key ${key}`, error);
             return {
                 data: null,
             };
@@ -37,7 +37,7 @@ class lib_queue {
             };
         }
         catch (error) {
-            console.error(`🚨 [Queue Lib] Error while adding value ${value} to key ${key}`, error);
+            console.error(`[Queue Lib] Error while adding value ${value} to key ${key}`, error);
             throw error;
         }
     }
@@ -46,7 +46,7 @@ class lib_queue {
             await redis.lset(key, index, JSON.stringify(value));
         }
         catch (error) {
-            console.error(`🚨 [Queue Lib] Error while updating index ${index} to value ${value} in key ${key}`, error);
+            console.error(`[Queue Lib] Error while updating index ${index} to value ${value} in key ${key}`, error);
             throw error;
         }
     }
@@ -55,7 +55,7 @@ class lib_queue {
             await redis.lrem(key, 0, JSON.stringify(value));
         }
         catch (error) {
-            console.error(`🚨 [Queue Lib] Error while removing value ${value} from key ${key}`, error);
+            console.error(`[Queue Lib] Error while removing value ${value} from key ${key}`, error);
             throw error;
         }
     }

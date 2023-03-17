@@ -18,7 +18,7 @@ export default class lib_queue {
         data: data.map((item: any) => JSON.parse(item)),
       };
     } catch (error) {
-      console.error(`🚨 [Queue Lib] Error while getting key ${key}`, error);
+      console.error(`[Queue Lib] Error while getting key ${key}`, error);
 
       return {
         data: null,
@@ -48,7 +48,7 @@ export default class lib_queue {
       };
     } catch (error) {
       console.error(
-        `🚨 [Queue Lib] Error while adding value ${value} to key ${key}`,
+        `[Queue Lib] Error while adding value ${value} to key ${key}`,
         error
       );
 
@@ -65,7 +65,7 @@ export default class lib_queue {
       await redis.lset(key, index, JSON.stringify(value));
     } catch (error) {
       console.error(
-        `🚨 [Queue Lib] Error while updating index ${index} to value ${value} in key ${key}`,
+        `[Queue Lib] Error while updating index ${index} to value ${value} in key ${key}`,
         error
       );
 
@@ -78,7 +78,7 @@ export default class lib_queue {
       await redis.lrem(key, 0, JSON.stringify(value));
     } catch (error) {
       console.error(
-        `🚨 [Queue Lib] Error while removing value ${value} from key ${key}`,
+        `[Queue Lib] Error while removing value ${value} from key ${key}`,
         error
       );
 
