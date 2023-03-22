@@ -2,7 +2,5 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/../Falcon-Serverside" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/../website-libs" vcs="Git" />
   </component>
 </project>
