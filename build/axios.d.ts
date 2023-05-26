@@ -3,7 +3,7 @@ declare module "@iunstable0/server-libs/build/axios" {
 
   export function request(options: {
     method: "POST" | "GET" | "PUT" | "DELETE";
-    url: string;
+    url?: string;
     baseURL?: any;
     headers?: any;
     data?: any;

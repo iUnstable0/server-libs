@@ -37,7 +37,7 @@ export default class lib_axios {
 
   public static request(options: {
     method: "POST" | "GET" | "PUT" | "DELETE";
-    url: string;
+    url?: string;
     baseURL?: any;
     headers?: any;
     data?: any;
@@ -58,7 +58,7 @@ export default class lib_axios {
 
         response = await axios.request({
           method: options.method,
-          url: options.url,
+          url: options.url || "",
           ...(options.baseURL ? { baseURL: options.baseURL } : {}),
           headers: requestHeaders,
           ...(options.data ? { data: options.data } : {}),

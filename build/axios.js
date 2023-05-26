@@ -52,7 +52,7 @@ class lib_axios {
                 // });
                 response = await axios_1.default.request({
                     method: options.method,
-                    url: options.url,
+                    url: options.url || "",
                     ...(options.baseURL ? { baseURL: options.baseURL } : {}),
                     headers: requestHeaders,
                     ...(options.data ? { data: options.data } : {}),
