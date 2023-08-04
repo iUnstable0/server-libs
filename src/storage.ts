@@ -127,7 +127,17 @@ export default class lib_storage {
     };
   }
 
-  public static async listFiles(db: string): Promise<Array<string>> {
+  public static async listFiles(
+    db: string,
+    depth: number = 1
+  ): Promise<string[]> {
+    // const objects = await client.send(
+    //   new ListObjectsV2Command({
+    //     Bucket: process.env.S3_BUCKET_NAME,
+    //     Prefix: db,
+    //   })
+    // );
+
     const objects = await client.send(
       new ListObjectsV2Command({
         Bucket: process.env.S3_BUCKET_NAME,
@@ -135,10 +145,46 @@ export default class lib_storage {
       })
     );
 
-    if (objects.Contents && objects.Contents.length > 0)
-      return objects.Contents.map((object: any) => object.Key);
+    if (objects.Contents && objects.Contents.length > 0) {
+      const splitDB = db.split("/");
+
+      let extraLevel = 0;
+
+      if (splitDB.length > 1) {
+        if (splitDB[splitDB.length - 1] === "") {
+          extraLevel += splitDB.length - 2;
+        } else {
+          extraLevel += splitDB.length - 1;
+        }
+      }
+
+      const filtered = objects.Contents.filter((object: any) => {
+        const split = object.Key.split("/");
+
+        // console.log(split.length - 1, depth);
+        // console.log(split.length - 1 === depth);
+        // return split.length - 1 === depth;
+
+        // Folders often end with a slash, while file doesn't. And split will return an array with the last element being an empty string.
+        // But, it also returns the folder itself, eg. "folder/" when listing files inside "folder".
+        // So we need to add extra check
+
+        return (
+          split.length -
+            ((split[split.length - 1] === "" ? 2 : 1) + extraLevel) ===
+          depth
+        );
+      });
+
+      return filtered.map((object: any) => object.Key);
+    }
 
     return [];
+
+    // if (objects.Contents && objects.Contents.length > 0)
+    //   return objects.Contents.map((object: any) => object.Key);
+    //
+    // return [];
   }
 
   public static async clearFiles(db: string): Promise<void> {
@@ -161,5 +207,14 @@ export default class lib_storage {
         })
       );
     }
+  }
+
+  public static async createFolder(db: string): Promise<void> {
+    await client.send(
+      new PutObjectCommand({
+        Bucket: process.env.S3_BUCKET_NAME,
+        Key: `${db}/`,
+      })
+    );
   }
 }
