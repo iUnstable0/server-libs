@@ -33,4 +33,6 @@ declare module "@iunstable0/server-libs/build/storage" {
   export function listFiles(db: string): Promise<Array<string>>;
 
   export function clearFiles(db: string): Promise<void>;
+
+  export function createFolder(db: string): Promise<void>;
 }
