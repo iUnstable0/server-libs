@@ -3,6 +3,7 @@ import {
   PutObjectCommand,
   ListObjectsV2Command,
   DeleteObjectsCommand,
+  CopyObjectCommand,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
@@ -29,7 +30,7 @@ export default class lib_storage {
       size: number;
       mime: string;
       hash: string;
-    }>
+    }>,
   ): Promise<
     Array<{
       url: string;
@@ -48,7 +49,7 @@ export default class lib_storage {
         new ListObjectsV2Command({
           Bucket: process.env.S3_BUCKET_NAME,
           Prefix: `${db}/${fileName}`,
-        })
+        }),
       );
 
       if (objects.Contents && objects.Contents.length > 0)
@@ -60,7 +61,7 @@ export default class lib_storage {
                 Key: object.Key,
               })),
             },
-          })
+          }),
         );
 
       const key = `${db}/${file.name}`,
@@ -80,7 +81,7 @@ export default class lib_storage {
               `Content-Length`,
               `Content-MD5`,
             ]),
-          }
+          },
         );
 
       urls.push({
@@ -101,7 +102,7 @@ export default class lib_storage {
     },
     options?: {
       clearFiles?: boolean;
-    }
+    },
   ): Promise<{
     publicSharingUrl: string;
     key: string;
@@ -118,7 +119,7 @@ export default class lib_storage {
         Key: key,
         Body: file.data,
         ContentType: file.mime,
-      })
+      }),
     );
 
     return {
@@ -129,7 +130,7 @@ export default class lib_storage {
 
   public static async listFiles(
     db: string,
-    depth: number = 1
+    depth: number = 1,
   ): Promise<string[]> {
     // const objects = await client.send(
     //   new ListObjectsV2Command({
@@ -142,7 +143,7 @@ export default class lib_storage {
       new ListObjectsV2Command({
         Bucket: process.env.S3_BUCKET_NAME,
         Prefix: db,
-      })
+      }),
     );
 
     if (objects.Contents && objects.Contents.length > 0) {
@@ -192,7 +193,7 @@ export default class lib_storage {
       new ListObjectsV2Command({
         Bucket: process.env.S3_BUCKET_NAME,
         Prefix: db,
-      })
+      }),
     );
 
     if (objects.Contents && objects.Contents.length > 0) {
@@ -204,8 +205,119 @@ export default class lib_storage {
               Key: object.Key,
             })),
           },
-        })
+        }),
       );
+    }
+  }
+
+  public static async copyFiles(
+    db: string,
+    destination: string,
+  ): Promise<void> {
+    // const objects = await client.send(new client_s3_1.ListObjectsV2Command({
+    //     Bucket: process.env.S3_BUCKET_NAME,
+    //     Prefix: db,
+    // }));
+    // console.log("LISTA");
+    const objects = await lib_storage.listFiles(db);
+    // console.log(objects);
+    if (objects.length > 0) {
+      // console.log(
+      //   `Copying ${objects.length} files from ${db} to ${destination}`,
+      // );
+
+      let count = 0;
+      let total = objects.length;
+
+      const chunkSize = Math.ceil(objects.length / 85);
+
+      const processChunk = async (chunk) => {
+        const promises = chunk.map(async (key, index) => {
+          const filename = key.split("/").pop();
+
+          // Logging before sending
+          // console.log(
+          //   `Copying ${
+          //     process.env.S3_BUCKET_NAME
+          //   }/${key} to ${destination}/${filename} (${index + 1}/${
+          //     chunk.length
+          //   })`,
+          // );
+
+          await client.send(
+            new CopyObjectCommand({
+              Bucket: process.env.S3_BUCKET_NAME,
+              CopySource: encodeURIComponent(
+                `${process.env.S3_BUCKET_NAME}/${key}`,
+              ),
+              Key: `${destination}/${filename}`,
+            }),
+          );
+
+          // Logging after completion
+          // console.log(
+          //   `Copied ${key} to ${destination} (${index + 1}/${chunk.length})`,
+          // );
+        });
+
+        await Promise.all(promises);
+      };
+
+      const delay = (time: number) =>
+        new Promise((resolve) => setTimeout(resolve, time));
+
+      (async () => {
+        for (let i = 0; i < 85; i++) {
+          const chunk = objects.slice(i * chunkSize, (i + 1) * chunkSize);
+          await processChunk(chunk);
+
+          // if (i < 14) { // No need to wait after the last chunk
+          //     console.log('Waiting for a few minutes before processing the next chunk...');
+          //     await delay(1000 * 60); // Waiting for 1 minute
+          // }
+        }
+        // console.log("All copy operations completed.");
+      })().catch((error) => {
+        console.error("An error occurred:", error);
+      });
+
+      // const promises = objects.map(async (key, index) => {
+      //     const filename = key.split("/").pop();
+
+      //     // Logging before sending
+      //     console.log(`Copying ${process.env.S3_BUCKET_NAME}/${key} to ${destination}/${filename} (${index + 1}/${objects.length})`);
+
+      //     await client.send(new client_s3_1.CopyObjectCommand({
+      //         Bucket: process.env.S3_BUCKET_NAME,
+      //         CopySource: encodeURIComponent(`${process.env.S3_BUCKET_NAME}/${key}`),
+      //         Key: `${destination}/${filename}`,
+      //     }));
+
+      //     // Logging after completion
+      //     console.log(`Copied ${key} to ${destination} (${index + 1}/${objects.length})`);
+      // });
+
+      // Promise.all(promises)
+      //     .then(() => {
+      //         console.log("All copy operations completed.");
+      //     })
+      //     .catch((error) => {
+      //         console.error("An error occurred:", error);
+      //     });
+
+      // for (const key of objects) {
+      //     const filename = key.split("/").pop();
+
+      //     // console.log(`Copying ${process.env.S3_BUCKET_NAME}/${key} to ${destination}/${filename} (${count}/${total})`);
+
+      //     client.send(new client_s3_1.CopyObjectCommand({
+      //         Bucket: process.env.S3_BUCKET_NAME,
+      //         CopySource: encodeURIComponent(`${process.env.S3_BUCKET_NAME}/${key}`),
+      //         Key: `${destination}/${filename}`,
+      //     }))
+
+      //     // console.log(`Copied ${key} to ${destination} (${count}/${total})`);
+      // }
     }
   }
 
@@ -214,7 +326,7 @@ export default class lib_storage {
       new PutObjectCommand({
         Bucket: process.env.S3_BUCKET_NAME,
         Key: `${db}/`,
-      })
+      }),
     );
   }
 }
