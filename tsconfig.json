@@ -15,7 +15,7 @@
     "types": [
       "node"
     ],
-    "watch": true,
+//    "watch": true,
     "resolveJsonModule": true,
     "baseUrl": "src",
     "incremental": true,
