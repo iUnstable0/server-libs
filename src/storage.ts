@@ -30,7 +30,7 @@ export default class lib_storage {
       size: number;
       mime: string;
       hash: string;
-    }>,
+    }>
   ): Promise<
     Array<{
       url: string;
@@ -49,7 +49,7 @@ export default class lib_storage {
         new ListObjectsV2Command({
           Bucket: process.env.S3_BUCKET_NAME,
           Prefix: `${db}/${fileName}`,
-        }),
+        })
       );
 
       if (objects.Contents && objects.Contents.length > 0)
@@ -61,7 +61,7 @@ export default class lib_storage {
                 Key: object.Key,
               })),
             },
-          }),
+          })
         );
 
       const key = `${db}/${file.name}`,
@@ -81,7 +81,7 @@ export default class lib_storage {
               `Content-Length`,
               `Content-MD5`,
             ]),
-          },
+          }
         );
 
       urls.push({
@@ -102,7 +102,7 @@ export default class lib_storage {
     },
     options?: {
       clearFiles?: boolean;
-    },
+    }
   ): Promise<{
     publicSharingUrl: string;
     key: string;
@@ -119,7 +119,7 @@ export default class lib_storage {
         Key: key,
         Body: file.data,
         ContentType: file.mime,
-      }),
+      })
     );
 
     return {
@@ -130,7 +130,7 @@ export default class lib_storage {
 
   public static async listFiles(
     db: string,
-    depth: number = 1,
+    depth: number = 1
   ): Promise<string[]> {
     // const objects = await client.send(
     //   new ListObjectsV2Command({
@@ -143,13 +143,15 @@ export default class lib_storage {
       new ListObjectsV2Command({
         Bucket: process.env.S3_BUCKET_NAME,
         Prefix: db,
-      }),
+      })
     );
 
     if (objects.Contents && objects.Contents.length > 0) {
       const splitDB = db.split("/");
 
       let extraLevel = 0;
+
+      if (db === "") extraLevel = -1;
 
       if (splitDB.length > 1) {
         if (splitDB[splitDB.length - 1] === "") {
@@ -169,6 +171,15 @@ export default class lib_storage {
         // Folders often end with a slash, while file doesn't. And split will return an array with the last element being an empty string.
         // But, it also returns the folder itself, eg. "folder/" when listing files inside "folder".
         // So we need to add extra check
+
+        // How this check works:
+        // If the last element is an empty string, then 2 is added to the extra level.
+        // Otherwise, 1 is added to the extra level.
+        // Extra level is the number of folders in the db path.
+        // For example, if db is "folder1/folder2/folder3/", then extra level is 3.
+        // Then we subtract the length of the split array with the extra level.
+        // Then we compare the result with the depth.
+        // If the result is equal to the depth, then we return true, otherwise we return false.
 
         return (
           split.length -
@@ -193,7 +204,7 @@ export default class lib_storage {
       new ListObjectsV2Command({
         Bucket: process.env.S3_BUCKET_NAME,
         Prefix: db,
-      }),
+      })
     );
 
     if (objects.Contents && objects.Contents.length > 0) {
@@ -205,14 +216,14 @@ export default class lib_storage {
               Key: object.Key,
             })),
           },
-        }),
+        })
       );
     }
   }
 
   public static async copyFiles(
     db: string,
-    destination: string,
+    destination: string
   ): Promise<void> {
     // const objects = await client.send(new client_s3_1.ListObjectsV2Command({
     //     Bucket: process.env.S3_BUCKET_NAME,
@@ -248,10 +259,10 @@ export default class lib_storage {
             new CopyObjectCommand({
               Bucket: process.env.S3_BUCKET_NAME,
               CopySource: encodeURIComponent(
-                `${process.env.S3_BUCKET_NAME}/${key}`,
+                `${process.env.S3_BUCKET_NAME}/${key}`
               ),
               Key: `${destination}/${filename}`,
-            }),
+            })
           );
 
           // Logging after completion
@@ -326,7 +337,7 @@ export default class lib_storage {
       new PutObjectCommand({
         Bucket: process.env.S3_BUCKET_NAME,
         Key: `${db}/`,
-      }),
+      })
     );
   }
 }
