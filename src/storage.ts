@@ -13,7 +13,7 @@ const endpoint = process.env[`${provider}_S3_ENDPOINT`];
 
 const client = new S3Client({
   endpoint: endpoint,
-  region: " ",
+  region: "auto",
   credentials: {
     accessKeyId: process.env[`${provider}_S3_ACCESS_KEY`],
     secretAccessKey: process.env[`${provider}_S3_SECRET_KEY`],
@@ -30,7 +30,7 @@ export default class lib_storage {
       size: number;
       mime: string;
       hash: string;
-    }>
+    }>,
   ): Promise<
     Array<{
       url: string;
@@ -49,7 +49,7 @@ export default class lib_storage {
         new ListObjectsV2Command({
           Bucket: process.env.S3_BUCKET_NAME,
           Prefix: `${db}/${fileName}`,
-        })
+        }),
       );
 
       if (objects.Contents && objects.Contents.length > 0)
@@ -61,7 +61,7 @@ export default class lib_storage {
                 Key: object.Key,
               })),
             },
-          })
+          }),
         );
 
       const key = `${db}/${file.name}`,
@@ -81,7 +81,7 @@ export default class lib_storage {
               `Content-Length`,
               `Content-MD5`,
             ]),
-          }
+          },
         );
 
       urls.push({
@@ -102,7 +102,7 @@ export default class lib_storage {
     },
     options?: {
       clearFiles?: boolean;
-    }
+    },
   ): Promise<{
     publicSharingUrl: string;
     key: string;
@@ -119,7 +119,7 @@ export default class lib_storage {
         Key: key,
         Body: file.data,
         ContentType: file.mime,
-      })
+      }),
     );
 
     return {
@@ -130,7 +130,7 @@ export default class lib_storage {
 
   public static async listFiles(
     db: string,
-    depth: number = 1
+    depth: number = 1,
   ): Promise<string[]> {
     // const objects = await client.send(
     //   new ListObjectsV2Command({
@@ -143,7 +143,7 @@ export default class lib_storage {
       new ListObjectsV2Command({
         Bucket: process.env.S3_BUCKET_NAME,
         Prefix: db,
-      })
+      }),
     );
 
     if (objects.Contents && objects.Contents.length > 0) {
@@ -204,7 +204,7 @@ export default class lib_storage {
       new ListObjectsV2Command({
         Bucket: process.env.S3_BUCKET_NAME,
         Prefix: db,
-      })
+      }),
     );
 
     if (objects.Contents && objects.Contents.length > 0) {
@@ -216,14 +216,14 @@ export default class lib_storage {
               Key: object.Key,
             })),
           },
-        })
+        }),
       );
     }
   }
 
   public static async copyFiles(
     db: string,
-    destination: string
+    destination: string,
   ): Promise<void> {
     // const objects = await client.send(new client_s3_1.ListObjectsV2Command({
     //     Bucket: process.env.S3_BUCKET_NAME,
@@ -237,13 +237,14 @@ export default class lib_storage {
       //   `Copying ${objects.length} files from ${db} to ${destination}`,
       // );
 
-      let count = 0;
-      let total = objects.length;
+      // let count = 0;
+      // let total = objects.length;
 
       const chunkSize = Math.ceil(objects.length / 85);
 
       const processChunk = async (chunk) => {
-        const promises = chunk.map(async (key, index) => {
+        const promises = chunk.map(async (key) => {
+          //async (key, index) => {
           const filename = key.split("/").pop();
 
           // Logging before sending
@@ -259,10 +260,10 @@ export default class lib_storage {
             new CopyObjectCommand({
               Bucket: process.env.S3_BUCKET_NAME,
               CopySource: encodeURIComponent(
-                `${process.env.S3_BUCKET_NAME}/${key}`
+                `${process.env.S3_BUCKET_NAME}/${key}`,
               ),
               Key: `${destination}/${filename}`,
-            })
+            }),
           );
 
           // Logging after completion
@@ -274,8 +275,8 @@ export default class lib_storage {
         await Promise.all(promises);
       };
 
-      const delay = (time: number) =>
-        new Promise((resolve) => setTimeout(resolve, time));
+      // const delay = (time: number) =>
+      //   new Promise((resolve) => setTimeout(resolve, time));
 
       (async () => {
         for (let i = 0; i < 85; i++) {
@@ -337,7 +338,7 @@ export default class lib_storage {
       new PutObjectCommand({
         Bucket: process.env.S3_BUCKET_NAME,
         Key: `${db}/`,
-      })
+      }),
     );
   }
 }
