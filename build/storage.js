@@ -6,7 +6,7 @@ const provider = process.env.S3_PROVIDER.toUpperCase();
 const endpoint = process.env[`${provider}_S3_ENDPOINT`];
 const client = new client_s3_1.S3Client({
     endpoint: endpoint,
-    region: " ",
+    region: "auto",
     credentials: {
         accessKeyId: process.env[`${provider}_S3_ACCESS_KEY`],
         secretAccessKey: process.env[`${provider}_S3_SECRET_KEY`],
@@ -150,11 +150,12 @@ class lib_storage {
             // console.log(
             //   `Copying ${objects.length} files from ${db} to ${destination}`,
             // );
-            let count = 0;
-            let total = objects.length;
+            // let count = 0;
+            // let total = objects.length;
             const chunkSize = Math.ceil(objects.length / 85);
             const processChunk = async (chunk) => {
-                const promises = chunk.map(async (key, index) => {
+                const promises = chunk.map(async (key) => {
+                    //async (key, index) => {
                     const filename = key.split("/").pop();
                     // Logging before sending
                     // console.log(
@@ -176,7 +177,8 @@ class lib_storage {
                 });
                 await Promise.all(promises);
             };
-            const delay = (time) => new Promise((resolve) => setTimeout(resolve, time));
+            // const delay = (time: number) =>
+            //   new Promise((resolve) => setTimeout(resolve, time));
             (async () => {
                 for (let i = 0; i < 85; i++) {
                     const chunk = objects.slice(i * chunkSize, (i + 1) * chunkSize);
