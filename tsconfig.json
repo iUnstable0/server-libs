@@ -9,7 +9,7 @@
     ],
     "target": "ESNext",
     // "module": "esnext",
-    "module": "commonjs",
+    "module": "nodenext",
     "moduleResolution": "NodeNext",
     "esModuleInterop": true,
     "types": [

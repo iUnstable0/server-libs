@@ -230,31 +230,41 @@ export default class lib_storage {
     //     Prefix: db,
     // }));
     // console.log("LISTA");
+
     const objects = await lib_storage.listFiles(db);
+
     // console.log(objects);
+
     if (objects.length > 0) {
       // console.log(
       //   `Copying ${objects.length} files from ${db} to ${destination}`,
       // );
 
       // let count = 0;
-      // let total = objects.length;
+      let total = objects.length;
 
-      const chunkSize = Math.ceil(objects.length / 85);
+      let chunkSize;
+
+      for (let i = 2; i < 6; i++) {
+        if (total % i == 0) {
+          chunkSize = i;
+          break;
+        }
+      }
 
       const processChunk = async (chunk) => {
-        const promises = chunk.map(async (key) => {
+        const promises = chunk.map(async (key, index) => {
           //async (key, index) => {
           const filename = key.split("/").pop();
 
           // Logging before sending
-          // console.log(
-          //   `Copying ${
-          //     process.env.S3_BUCKET_NAME
-          //   }/${key} to ${destination}/${filename} (${index + 1}/${
-          //     chunk.length
-          //   })`,
-          // );
+          console.log(
+            `Copying ${
+              process.env.S3_BUCKET_NAME
+            }/${key} to ${destination}/${filename} (${index + 1}/${
+              chunk.length
+            })`,
+          );
 
           await client.send(
             new CopyObjectCommand({
