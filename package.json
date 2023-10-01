@@ -1,29 +1,26 @@
 {
   "name": "@iunstable0/server-libs",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "main": "index.js",
   "scripts": {
-    "build": "tsc --build",
+    "build": "tsc",
     "postbuild": "copyfiles -u 1 src/**/*.d.ts build"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.414.0",
-    "@aws-sdk/s3-request-presigner": "^3.414.0",
+    "@aws-sdk/client-s3": "^3.421.0",
+    "@aws-sdk/s3-request-presigner": "^3.421.0",
     "ansi-colors": "^4.1.3",
-    "axios": "^1.5.0",
+    "axios": "^1.5.1",
     "hcaptcha": "^0.1.1",
     "ioredis": "^5.3.2",
     "nodemailer": "^6.9.5",
     "password-validator": "^5.3.0"
   },
   "devDependencies": {
-    "@types/node": "^20.6.2",
+    "@types/node": "^20.8.0",
     "copyfiles": "^2.4.1",
     "prettier": "3.0.3",
-    "rimraf": "^5.0.1",
+    "rimraf": "^5.0.5",
     "typescript": "^5.2.2"
   }
 }
