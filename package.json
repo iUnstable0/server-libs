@@ -1,6 +1,6 @@
 {
   "name": "@iunstable0/server-libs",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "main": "index.js",
   "scripts": {
     "build": "tsc",

@@ -66,7 +66,7 @@ class lib_storage {
             ContentType: file.mime,
         }));
         return {
-            publicSharingUrl: `${process.env.S3_CUSTOM_DOMAIN}/${key}`,
+            publicSharingUrl: `${process.env[`${process.env.S3_PROVIDER.toUpperCase()}_S3_CUSTOM_DOMAIN`]}/${key}`,
             key: key,
         };
     }
