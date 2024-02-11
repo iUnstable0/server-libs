@@ -1,28 +1,26 @@
 {
   "compilerOptions": {
-    "rootDirs": [
-      "src"
-    ],
+    "target": "ESNext",
     "outDir": "build",
     "lib": [
-      "ESNext"
+      "ESNext",
+      "dom"
     ],
-    "target": "ESNext",
-    // "module": "esnext",
-    "module": "commonjs",
-    "moduleResolution": "NodeNext",
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true,
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "types": [
       "node"
     ],
-//    "watch": true,
     "resolveJsonModule": true,
-    "baseUrl": "src",
     "incremental": true,
-    "skipLibCheck": true
+    "baseUrl": ".",
   },
   "include": [
-    "./src"
+    "src/**/*",
+    "environment.d.ts"
   ],
   "exclude": [
     "node_modules"

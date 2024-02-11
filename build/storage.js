@@ -66,7 +66,7 @@ class lib_storage {
             ContentType: file.mime,
         }));
         return {
-            publicSharingUrl: `${process.env.S3_CUSTOM_DOMAIN}/${key}`,
+            publicSharingUrl: `${process.env[`${process.env.S3_PROVIDER.toUpperCase()}_S3_CUSTOM_DOMAIN`]}/${key}`,
             key: key,
         };
     }
@@ -151,20 +151,20 @@ class lib_storage {
             //   `Copying ${objects.length} files from ${db} to ${destination}`,
             // );
             // let count = 0;
-            // let total = objects.length;
-            const chunkSize = Math.ceil(objects.length / 85);
+            let total = objects.length;
+            let chunkSize;
+            for (let i = 2; i < 6; i++) {
+                if (total % i == 0) {
+                    chunkSize = i;
+                    break;
+                }
+            }
             const processChunk = async (chunk) => {
-                const promises = chunk.map(async (key) => {
+                const promises = chunk.map(async (key, index) => {
                     //async (key, index) => {
                     const filename = key.split("/").pop();
                     // Logging before sending
-                    // console.log(
-                    //   `Copying ${
-                    //     process.env.S3_BUCKET_NAME
-                    //   }/${key} to ${destination}/${filename} (${index + 1}/${
-                    //     chunk.length
-                    //   })`,
-                    // );
+                    console.log(`Copying ${process.env.S3_BUCKET_NAME}/${key} to ${destination}/${filename} (${index + 1}/${chunk.length})`);
                     await client.send(new client_s3_1.CopyObjectCommand({
                         Bucket: process.env.S3_BUCKET_NAME,
                         CopySource: encodeURIComponent(`${process.env.S3_BUCKET_NAME}/${key}`),
